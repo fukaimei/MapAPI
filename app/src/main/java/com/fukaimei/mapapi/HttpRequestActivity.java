@@ -94,7 +94,7 @@ public class HttpRequestActivity extends AppCompatActivity implements GetAddress
         }
     }
 
-    private String mAddress = "";
+    private String mAddress = "当前定位地址解析失败，请开启网络方可解析！";
 
     @Override
     public void onFindAddress(String address) {
