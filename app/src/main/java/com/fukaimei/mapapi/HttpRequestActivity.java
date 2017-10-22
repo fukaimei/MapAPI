@@ -28,6 +28,35 @@ public class HttpRequestActivity extends AppCompatActivity implements GetAddress
     private Criteria mCriteria = new Criteria();
     private Handler mHandler = new Handler();
     private boolean bLocationEnable = false;
+    private String mAddress = "";
+    // 位置监听器
+    private LocationListener mLocationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            setLocationText(location);
+        }
+
+        @Override
+        public void onProviderDisabled(String arg0) {
+        }
+
+        @Override
+        public void onProviderEnabled(String arg0) {
+        }
+
+        @Override
+        public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+        }
+    };
+    private Runnable mRefresh = new Runnable() {
+        @Override
+        public void run() {
+            if (bLocationEnable == false) {
+                initLocation();
+                mHandler.postDelayed(this, 1000);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +123,6 @@ public class HttpRequestActivity extends AppCompatActivity implements GetAddress
         }
     }
 
-    private String mAddress = "当前定位地址解析失败，请开启网络方可解析！";
-
     @Override
     public void onFindAddress(String address) {
         mAddress = address;
@@ -124,36 +151,6 @@ public class HttpRequestActivity extends AppCompatActivity implements GetAddress
         Location location = mLocationMgr.getLastKnownLocation(method);
         setLocationText(location);
     }
-
-    // 位置监听器
-    private LocationListener mLocationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(Location location) {
-            setLocationText(location);
-        }
-
-        @Override
-        public void onProviderDisabled(String arg0) {
-        }
-
-        @Override
-        public void onProviderEnabled(String arg0) {
-        }
-
-        @Override
-        public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-        }
-    };
-
-    private Runnable mRefresh = new Runnable() {
-        @Override
-        public void run() {
-            if (bLocationEnable == false) {
-                initLocation();
-                mHandler.postDelayed(this, 1000);
-            }
-        }
-    };
 
     @Override
     protected void onDestroy() {
