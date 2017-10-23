@@ -1,11 +1,5 @@
 package com.fukaimei.mapapi.task;
 
-import java.text.MessageFormat;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -14,9 +8,16 @@ import com.fukaimei.mapapi.http.HttpRequestUtil;
 import com.fukaimei.mapapi.http.tool.HttpReqData;
 import com.fukaimei.mapapi.http.tool.HttpRespData;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.MessageFormat;
+
 public class GetAddressTask extends AsyncTask<Location, Void, String> {
     private final static String TAG = "GetAddressTask";
     private static String mAddressUrl = "http://maps.google.cn/maps/api/geocode/json?latlng={0},{1}&sensor=true&language=zh-CN";
+    private OnAddressListener mListener;
 
     public GetAddressTask() {
         super();
@@ -30,7 +31,7 @@ public class GetAddressTask extends AsyncTask<Location, Void, String> {
         HttpRespData resp_data = HttpRequestUtil.getData(req_data);
         Log.d(TAG, "return json = " + resp_data.content);
 
-        String address = "未知";
+        String address = "当前定位地址解析失败，请开启网络方可解析！";
         if (resp_data.err_msg.length() <= 0) {
             try {
                 JSONObject obj = new JSONObject(resp_data.content);
@@ -52,14 +53,12 @@ public class GetAddressTask extends AsyncTask<Location, Void, String> {
         mListener.onFindAddress(address);
     }
 
-    private OnAddressListener mListener;
-
     public void setOnAddressListener(OnAddressListener listener) {
         mListener = listener;
     }
 
-    public static interface OnAddressListener {
-        public abstract void onFindAddress(String address);
+    public interface OnAddressListener {
+        void onFindAddress(String address);
     }
 
 }
